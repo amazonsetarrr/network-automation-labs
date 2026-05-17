@@ -9,7 +9,7 @@
   tasks:
     - name: Push hostname config from template
       cisco.ios.ios_config:
-        src: templates/hostname.j2
+        src: ../templates/hostname.j2
         backup: true                        # saves config backup before change
 
     - name: Verify hostname was applied
