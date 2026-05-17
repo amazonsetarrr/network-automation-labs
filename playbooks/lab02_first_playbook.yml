@@ -7,7 +7,7 @@
 # =============================================================================
  
 - name: Collect and display Cisco IOS device facts
-  hosts: routers          # Target the 'routers' group defined in your inventory
+  hosts: all          # Target the 'routers' group defined in your inventory
  
   # -------------------------------------------------------------------------
   # Connection settings — network_cli is required for IOS CLI-based modules.
