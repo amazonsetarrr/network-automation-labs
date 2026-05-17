@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ansible
+*.retry
+vault_pass.txt
+.vault_pass
+
+# Environment / secrets
+.env
+secrets.yml
+
+# VS Code
+.vscode/
