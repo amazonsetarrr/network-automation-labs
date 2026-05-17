@@ -1,0 +1,22 @@
+---
+- name: lab06_change_hostname
+  hosts: al
+  gather_facts: false
+
+  vars:
+    hostname: "{{ inventory_hostname }}"  
+    
+  tasks:
+    - name: Push hostname config from template
+      cisco.ios.ios_config:
+        src: templates/hostname.j2
+        backup: true                        # saves config backup before change
+
+    - name: Verify hostname was applied
+      cisco.ios.ios_command:
+        commands: show running-config | include hostname
+      register: result
+
+    - name: Print result
+      debug:
+        var: result.stdout_lines
