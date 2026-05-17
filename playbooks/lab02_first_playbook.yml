@@ -1,0 +1,74 @@
+---
+# =============================================================================
+# Playbook: Collect Cisco IOS Facts
+# Description: Gathers device facts from all routers in the inventory and
+#              prints the hostname and IOS version for each device.
+# Usage: ansible-playbook collect_ios_facts.yml -i inventory.yml
+# =============================================================================
+ 
+- name: Collect and display Cisco IOS device facts
+  hosts: routers          # Target the 'routers' group defined in your inventory
+ 
+  # -------------------------------------------------------------------------
+  # Connection settings — network_cli is required for IOS CLI-based modules.
+  # become: false is explicitly set because IOS privilege escalation (enable)
+  # is handled separately via ansible_become_method: enable if needed.
+  # -------------------------------------------------------------------------
+  connection: network_cli
+  become: false
+ 
+  # -------------------------------------------------------------------------
+  # Disable Ansible's default fact gathering (setup module) — it does not
+  # apply to network devices and would cause errors if left enabled.
+  # -------------------------------------------------------------------------
+  gather_facts: false
+ 
+  # -------------------------------------------------------------------------
+  # Variables: Define the network OS so network_cli knows which CLI parser
+  # to use. This can also be set in inventory (group_vars/routers.yml).
+  # -------------------------------------------------------------------------
+  vars:
+    ansible_network_os: ios
+ 
+  # ===========================================================================
+  # Tasks
+  # ===========================================================================
+  tasks:
+ 
+    # -------------------------------------------------------------------------
+    # Task 1: Gather all available facts from the IOS device.
+    # The 'all' gather_subset collects hardware, config, interfaces, and more.
+    # Facts are stored as host variables (e.g., ansible_net_hostname).
+    # -------------------------------------------------------------------------
+    - name: Gather all IOS facts
+      cisco.ios.ios_facts:
+        gather_subset:
+          - all
+ 
+    # -------------------------------------------------------------------------
+    # Task 2: Print the device hostname extracted from the running config.
+    # ansible_net_hostname reflects the configured hostname on the device.
+    # -------------------------------------------------------------------------
+    - name: Display device hostname
+      ansible.builtin.debug:
+        msg: "Hostname: {{ ansible_net_hostname }}"
+ 
+    # -------------------------------------------------------------------------
+    # Task 3: Print the IOS software version running on the device.
+    # ansible_net_version captures the full IOS version string.
+    # -------------------------------------------------------------------------
+    - name: Display IOS version
+      ansible.builtin.debug:
+        msg: "IOS Version: {{ ansible_net_version }}"
+ 
+    # -------------------------------------------------------------------------
+    # Task 4 (Optional): Print both facts together in a single structured
+    # message — useful for quick audit summaries across many devices.
+    # -------------------------------------------------------------------------
+    - name: Display hostname and version summary
+      ansible.builtin.debug:
+        msg:
+          - "Device  : {{ ansible_net_hostname }}"
+          - "Version : {{ ansible_net_version }}"
+          - "Model   : {{ ansible_net_model | default('N/A') }}"
+          - "Serial  : {{ ansible_net_serialnum | default('N/A') }}"
