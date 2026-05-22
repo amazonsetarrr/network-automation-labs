@@ -1,4 +1,4 @@
-{% set servers = ntp_servers | default(['1.1.1.1', '8.8.8.8']) %}
-{% for s in servers %}
-ntp server {{ s }}
+{% set servers = ntp_servers -%}
+{% for server in servers -%}
+ntp server {{ server }}
 {% endfor %}
