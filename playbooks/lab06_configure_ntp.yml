@@ -1,0 +1,22 @@
+---
+- name: lab06_configure_ntp
+  hosts: all
+  gather_facts: false
+  tasks:
+  vars_files:
+    - vars/ntp_vars.yml
+
+  tasks:
+    - name: Push NTP configuration from template
+      cisco.ios.ios_config:
+        src: ../templates/ntp.j2
+        backup: true
+
+    - name: Verify NTP servers applied
+      cisco.ios.ios_command:
+        commands: show running-config | include ntp server
+      register: result
+
+    - name: Print result
+      debug:
+        var: result.stdout_lines

@@ -1,0 +1,5 @@
+---
+#used by playbooks/lab06_configure_ntp.yml)
+ntp_servers:
+  - 1.1.1.1
+  - 8.8.8.8
